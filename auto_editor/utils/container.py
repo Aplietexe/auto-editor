@@ -72,6 +72,8 @@ def container_constructor(ext: str) -> Container:
             vdefault = container.default_video_codec
         adefault = container.default_audio_codec
         sdefault = container.default_subtitle_codec
+        if sdefault == "none" and ext == "mp4":
+            sdefault = "srt"
 
     vcodecs = set()
     acodecs = set()
@@ -83,6 +85,10 @@ def container_constructor(ext: str) -> Container:
             vcodecs.add(codec)
             if codec == "h264":
                 vcodecs.add("libx264")
+            if codec == "av1":
+                vcodecs.add("libsvtav1")
+            if codec == "hevc":
+                vcodecs.add("hevc_nvenc")
         if kind == "audio":
             acodecs.add(codec)
         if kind == "subtitle":

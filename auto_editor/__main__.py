@@ -260,6 +260,9 @@ def main_options(parser: ArgumentParser) -> ArgumentParser:
         help="Add extra options for ffmpeg. Must be in quotes",
     )
     parser.add_argument(
+        "--config", flag=True, help="When set, look for `config.pal` and run it"
+    )
+    parser.add_argument(
         "--no-cache", flag=True, help="Don't look for or write a cache file"
     )
     parser.add_argument("--version", "-V", flag=True, help="Display version and halt")
@@ -305,9 +308,11 @@ def main() -> None:
 
         import av
 
+        license = av._core.library_meta["libavcodec"]["license"]
+
         print(f"OS: {plat.system()} {plat.release()} {plat.machine().lower()}")
         print(f"Python: {plat.python_version()}")
-        print(f"PyAV: {av.__version__}")
+        print(f"PyAV: {av.__version__} ({license})")
         print(f"Auto-Editor: {auto_editor.__version__}")
         return
 

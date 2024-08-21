@@ -149,6 +149,7 @@ class VideoStream:
 class AudioStream:
     codec: str
     samplerate: int
+    layout: str
     channels: int
     duration: float
     bitrate: int
@@ -195,7 +196,7 @@ def initFileInfo(path: str, log: Log) -> FileInfo:
     try:
         cont = av.open(path, "r")
     except av.error.FileNotFoundError:
-        log.error(f"Could not find '{path}'")
+        log.error(f"Input file doesn't exist: {path}")
     except av.error.IsADirectoryError:
         log.error(f"Expected a media file, but got a directory: {path}")
     except av.error.InvalidDataError:
@@ -232,7 +233,7 @@ def initFileInfo(path: str, log: Log) -> FileInfo:
                 vdur,
                 sar,
                 v.time_base,
-                cc.pix_fmt,
+                getattr(v.format, "name", None),
                 cc.color_range,
                 cc.colorspace,
                 cc.color_primaries,
@@ -252,6 +253,7 @@ def initFileInfo(path: str, log: Log) -> FileInfo:
             AudioStream(
                 a_cc.name,
                 0 if a_cc.sample_rate is None else a_cc.sample_rate,
+                a.layout.name,
                 a_cc.channels,
                 adur,
                 0 if a_cc.bit_rate is None else a_cc.bit_rate,
